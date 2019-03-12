@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block title %}Welcome{% endblock %}
+{% block content %}
+<p class="important" style='margin: 2rem'>
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% else %}
+    <h1>Welcome!</h1>
+    Are you new or have you already registered?
+    {% endif %}
+</p>
+<form class="form-inline" action="{{ url_for('hello') }}" method="POST" style='margin: 2rem'>
+    <div class="form-group mx-sm-3 mb-2">
+        <input name="membership_id" class="form-control" placeholder="Membership ID here">
+    </div>
+    <button type="submit" class="btn btn-primary btn-lg mb-2">My gym classes</button>
+</form>
+<form action="{{ url_for('register') }}">
+    <button type="submit" class="btn btn-primary btn-lg" style='margin: 2rem'>
+        New user, register
+    </button>
+</form>
+<br>
+<br>
+
+{% endblock %}
