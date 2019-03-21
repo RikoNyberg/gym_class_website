@@ -1,28 +1,79 @@
-{% extends "layout.html" %}
-{% block title %}Welcome{% endblock %}
-{% block content %}
-<p class="important" style='margin: 2rem'>
-    {% if error %}
-    <div class="alert alert-danger" role="alert">
-        {{ error }}
-    </div>
-    {% else %}
-    <h1>Welcome!</h1>
-    Are you new or have you already registered?
-    {% endif %}
-</p>
-<form class="form-inline" action="{{ url_for('hello') }}" method="POST" style='margin: 2rem'>
-    <div class="form-group mx-sm-3 mb-2">
-        <input name="membership_id" class="form-control" placeholder="Membership ID here">
-    </div>
-    <button type="submit" class="btn btn-primary btn-lg mb-2">My gym classes</button>
-</form>
-<form action="{{ url_for('register') }}">
-    <button type="submit" class="btn btn-primary btn-lg" style='margin: 2rem'>
-        New user, register
-    </button>
-</form>
-<br>
-<br>
+<!DOCTYPE html>
+<html lang="en">
 
-{% endblock %}
+<head>
+    <!-- Required meta tags-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+    <!-- Title Page-->
+    <title>Register</title>
+
+    <!-- Icons font CSS-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link href="{{ url_for('static', filename='vendor/mdi-font/css/material-design-iconic-font.min.css') }}"
+        rel="stylesheet" media="all">
+    <link href="{{ url_for('static', filename='vendor/font-awesome-4.7/css/font-awesome.min.css') }}" rel="stylesheet"
+        media="all">
+    <!-- Font special for pages-->
+    <link
+        href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Vendor CSS-->
+    <link href="{{ url_for('static', filename='vendor/select2/select2.min.css') }}" rel="stylesheet" media="all">
+    <link href="{{ url_for('static', filename='vendor/datepicker/daterangepicker.css') }}" rel="stylesheet" media="all">
+
+    <!-- Main CSS-->
+    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" media="all">
+</head>
+
+<body>
+    <div class="page-wrapper bg-gra-01 p-t-180 p-b-100 font-poppins">
+        <div class="wrapper wrapper--w780">
+            <div class="card card-3">
+                <div class="card-heading-2"></div>
+                <div class="card-body">
+                    <h2 class="title">Book your classes</h2>
+                    {% if error %}
+                    <div class="alert alert-warning" role="alert">
+                        {{ error }}
+                    </div>
+                    {% endif %}
+                    <form action="{{ url_for('booking') }}">
+                        <div class="input-group">
+                            <input class="input--style-3" type="text" placeholder="Membership ID" name="membership_id">
+                        </div>
+                        <div class="p-t-10">
+                            <button class="btn btn--pill btn--green" type="submit">Login</button>
+                        </div>
+                    </form>
+                    <form action="{{ url_for('register') }}">
+                        <div class="p-t-100">
+                            <button class="btn btn--pill" type="submit">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jquery JS-->
+    <script type="text/javascript" src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <!-- Vendor JS-->
+    <script type="text/javascript" src="{{ url_for('static', filename='vendor/select2/select2.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='vendor/datepicker/moment.min.js') }}"></script>
+    <script type="text/javascript"
+        src="{{ url_for('static', filename='vendor/datepicker/daterangepicker.js') }}"></script>
+
+    <!-- Main JS-->
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/global.js') }}"></script>
+
+</body>
+
+</html>
+<!-- end document-->

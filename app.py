@@ -23,12 +23,11 @@ class RegistrationForm(Form):
     membership_id = StringField(
         'Membership Number', [validators.Length(min=9, max=9)])
     email = StringField('Email Address', [validators.Length(min=6, max=35)])
-    password = PasswordField('Password - please use the same as in your membership', [
+    birthday = PasswordField('Password', [
         validators.DataRequired(),
         validators.EqualTo('confirm', message='Passwords must match')
     ])
     confirm = PasswordField('Repeat Password')
-    accept_tos = BooleanField('I accept the TOS', [validators.DataRequired()])
 
 
 app = Flask(__name__)
@@ -43,12 +42,15 @@ def home():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm(request.form)
-    if request.method == 'POST' and form.validate():
+    if request.method == 'POST':
+        bd = form.birthday.data.split('/')
+        password = bd[0] + bd[1] + bd[2][-2:]
+
         user = {
             '_id': form.membership_id.data,
             'name': form.name.data,
             'email': form.email.data,
-            'password': form.password.data
+            'password': password
         }
         print(user)
         try:
@@ -66,18 +68,18 @@ def register():
                 }}
             )
 
-        return redirect(url_for('hello', membership_id=form.membership_id.data))
+        return redirect(url_for('booking', membership_id=form.membership_id.data))
     return render_template('register.html', form=form)
 
 
-@app.route('/hello/', methods=['GET', 'POST'])
-@app.route('/hello/<membership_id>', methods=['GET', 'POST'])
-def hello(membership_id=None):
+@app.route('/booking/', methods=['GET', 'POST'])
+@app.route('/booking/<membership_id>', methods=['GET', 'POST'])
+def booking(membership_id=None):
     if request.method == 'POST':
         membership_id = request.form.get('membership_id')
         gym_class_id = request.form.get('gym_class_id')
         if not gym_class_id:
-            return redirect(url_for('hello', membership_id=membership_id))
+            return redirect(url_for('booking', membership_id=membership_id))
         gym_class = gym_classes_collection.find_one({'_id': gym_class_id})
         register_members = gym_class.get('register_members', [])
         if len(register_members):
@@ -93,7 +95,7 @@ def hello(membership_id=None):
             gym_classes_collection.update(
                 {'_id': gym_class_id},
                 {'$set': {'register_members': [membership_id]}})
-        return redirect(url_for('hello', membership_id=membership_id))
+        return redirect(url_for('booking', membership_id=membership_id))
     if not membership_id:
         return render_template('index.html', error='Missing membership ID.')
     elif len(membership_id) != 9:
@@ -113,6 +115,7 @@ def hello(membership_id=None):
         'register_members': 1,
     })
     gym_classes = list(gym_classes)
+    gym_classes = sorted(gym_classes, key=lambda k: k['start_time'])
     gym_classes_by_day = []
     one_day = []
     for i in range(len(gym_classes)):
@@ -135,7 +138,7 @@ def hello(membership_id=None):
             one_day = [gym_class]
     gym_classes_by_day.append(one_day)
     return render_template(
-        'hello.html',
+        'booking.html',
         gym_classes_by_day=gym_classes_by_day,
         membership_id=membership_id,)
 

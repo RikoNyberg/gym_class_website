@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% from "gym_classes.html" import render_gym_classes %}
+{% block title %}Booking{% endblock %}
+{% block content %}
+<form action="{{ url_for('booking') }}" method="post">
+  <input type='hidden' name="membership_id" value="{{membership_id}}">
+  <input type='hidden' name="session_id" value="{{session_id}}">
+  <table class="table w-auto">
+    {% for one_day_gym_classes in gym_classes_by_day %}
+    <thead>
+      <th scope="col">{{ one_day_gym_classes.0.date }}</th>
+      <th></th>
+    </thead>
+    <tbody>
+      {% for gym_class in one_day_gym_classes %}
+      
+      {% if gym_class.register_members_done %}
+        {% if gym_class.register_members %}
+          <tr value="{{gym_class._id}}" class="bg-success">
+            <td>{{ gym_class.time }} - {{ gym_class.class_name }}</td>
+            <td><button name="gym_class_id" value="{{gym_class._id}}" class="btn btn-danger btn-block"> Remove booking </button></td>
+          </tr>
+        {% else %}
+          <tr value="{{gym_class._id}}" class="bg-danger">
+            <td>{{ gym_class.time }} - {{ gym_class.class_name }}</td>
+            <td><button name="gym_class_id" value="{{gym_class._id}}" class="btn btn-success btn-block"> Do not remove booking </button></td>
+          </tr>
+        {% endif %}
+      {% elif gym_class.register_members %}
+        <tr value="registering_48_hours_before" class="bg-warning">
+          <td>{{ gym_class.time }} - {{ gym_class.class_name }}</td>
+          <td><button name="gym_class_id" value="{{gym_class._id}}" class="btn btn-danger btn-block"> Remove booking </button></td>
+        </tr>
+      {% else %}    
+        {% if gym_class.capacity_free == '0' %}
+          <tr value="fully_booked">
+              <td>{{ gym_class.time }} - {{ gym_class.class_name }}</td>
+              <td><button class="btn btn-warning btn-block" disabled> Fully booked </button></td>
+          </tr>
+        {% else %}
+          <tr value="{{gym_class._id}}">
+            <td>{{ gym_class.time }} - {{ gym_class.class_name }} -- {{gym_class.capacity_free}}</td>
+            <td><button name="gym_class_id" value="{{gym_class._id}}" class="btn btn-success btn-block"> Book class </button></td>
+          </tr>
+        {% endif %}
+      {% endif %}
+      {% endfor %}
+    </tbody>
+    {% endfor %}
+  </table>
+</form>
+
+{% endblock %}

@@ -46,3 +46,21 @@ h1 {
   -o-transform:skew(8deg) rotate(3deg);
   transform:skew(8deg) rotate(3deg);
 }
+
+.table {
+  background: #212529 !important;
+  color: white !important;
+}
+
+.table td {
+  vertical-align: middle; 
+}
+
+.table thead {
+  background: black !important;
+  color: white !important;
+}
+
+table tr {
+  /* overflow: hidden; */
+}
