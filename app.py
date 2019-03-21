@@ -45,14 +45,12 @@ def register():
     if request.method == 'POST':
         bd = form.birthday.data.split('/')
         password = bd[0] + bd[1] + bd[2][-2:]
-
         user = {
             '_id': form.membership_id.data,
             'name': form.name.data,
             'email': form.email.data,
             'password': password
         }
-        print(user)
         try:
             gym_users_collection.insert_one(user)
             flash('Thanks for registering')
