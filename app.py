@@ -69,6 +69,9 @@ def register():
         return redirect(url_for('booking', membership_id=form.membership_id.data))
     return render_template('register.html', form=form)
 
+@app.route('/test')
+def test():
+    return render_template('index.html', test='Test ID is 123123123')
 
 @app.route('/booking/', methods=['GET', 'POST'])
 @app.route('/booking/<membership_id>', methods=['GET', 'POST'])

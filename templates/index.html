@@ -8,6 +8,11 @@
         {{ error }}
     </div>
     {% endif %}
+    {% if test %}
+    <div class="alert alert-warning" role="alert">
+        {{ test }}
+    </div>
+    {% endif %}
     <form method="POST" action="{{ url_for('booking') }}">
         <div class="input-group">
             <input class="input--style-3" type="text" placeholder="Membership ID" name="membership_id">
@@ -15,7 +20,13 @@
         <div class="p-t-10">
             <button class="btn btn--pill btn--green" type="submit">Login</button>
         </div>
+        {% if test %}
+        <div class="p-t-10">
+            <a class="arrow up">Up</a>
+        </div>
+        {% endif %}
     </form>
+
     <form action="{{ url_for('register') }}">
         <div class="p-t-100">
             <button class="btn btn--pill" type="submit">Register</button>
