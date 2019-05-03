@@ -31,7 +31,6 @@ class RegistrationForm(Form):
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'asdlfkjlkasjdflkjaslkfdjaslkjdf'
 
 
 @app.route('/')
