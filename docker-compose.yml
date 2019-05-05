@@ -10,8 +10,6 @@ services:
       # LETSENCRYPT_EMAIL: hello@domain.com
     expose:
       - 5000
-    args:
-      "MONGO_URL:${MONGO_URL}"
         
 
 networks:
