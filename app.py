@@ -14,16 +14,15 @@ DEBUG = False  # False is for production
 try:
     m = os.environ['MONGO_URL']
     logging.info(m)
-except:
-    logging.info('MONGO_URL does not exist!!')
-if DEBUG:
-    from credentials import MONGO_URL
-    gym_users_collection = MongoClient(MONGO_URL).gym.users
-    gym_classes_collection = MongoClient(MONGO_URL).gym.reservations
-else:
     gym_users_collection = MongoClient(os.environ.get('MONGO_URL')).gym.users
     gym_classes_collection = MongoClient(
         os.environ.get('MONGO_URL')).gym.reservations
+except:
+    logging.info('MONGO_URL env variable does not exist!')
+    from credentials import MONGO_URL
+    gym_users_collection = MongoClient(MONGO_URL).gym.users
+    gym_classes_collection = MongoClient(MONGO_URL).gym.reservations
+    
 
 
 class RegistrationForm(Form):
