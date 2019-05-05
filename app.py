@@ -6,8 +6,16 @@ import random
 import string
 import datetime
 import os
+import logging
+logging.basicConfig(format='%(message)s', level=logging.INFO)
+
 
 DEBUG = False  # False is for production
+try:
+    m = os.environ['MONGO_URL']
+    logging.info(m)
+except:
+    logging.info('MONGO_URL does not exist!!')
 if DEBUG:
     from credentials import MONGO_URL
     gym_users_collection = MongoClient(MONGO_URL).gym.users
