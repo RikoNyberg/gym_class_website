@@ -2,12 +2,12 @@ version: "3.7"
 
 services:
   my-app:
-    image: gym
+    image: gym_class_website
     environment:
       VIRTUAL_HOST: gym.rikonyberg.com
       VIRTUAL_PORT: 5000
       LETSENCRYPT_HOST: gym.rikonyberg.com
-      # LETSENCRYPT_EMAIL: yero@blog.yerosound.com
+      # LETSENCRYPT_EMAIL: hello@domain.com
     expose:
       - 5000
 
