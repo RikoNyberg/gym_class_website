@@ -1,0 +1,14 @@
+services:
+  gym:  
+    image: gym
+    environment:
+      VIRTUAL_HOST: yerosound.com 
+      VIRTUAL_PORT: 5000
+      LETSENCRYPT_HOST: yerosound.com
+      LETSENCRYPT_EMAIL: yero@yerosound.com
+    expose:
+      - 5000
+networks:
+  default:
+    external:
+      name: nginx-proxy
