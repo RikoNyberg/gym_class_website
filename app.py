@@ -1,4 +1,4 @@
-from flask import Flask, request, flash, redirect, url_for
+from flask import Flask, request, redirect, url_for
 from flask import render_template
 from wtforms import Form, BooleanField, StringField, PasswordField, validators
 from pymongo import MongoClient, errors
@@ -6,11 +6,13 @@ import random
 import string
 import datetime
 import os
+from google_calendar import GoogleCal
 import logging
 logging.basicConfig(format='%(message)s', level=logging.INFO)
 
 
 DEBUG = False  # False is for production
+calendar = GoogleCal()
 try:
     m = os.environ['MONGO_URL']
     logging.info(m)
@@ -19,10 +21,10 @@ try:
         os.environ.get('MONGO_URL')).gym.reservations
 except:
     logging.info('MONGO_URL env variable does not exist!')
-    from credentials import MONGO_URL
-    gym_users_collection = MongoClient(MONGO_URL).gym.users
-    gym_classes_collection = MongoClient(MONGO_URL).gym.reservations
-    
+    from credentials import credentials
+    gym_users_collection = MongoClient(credentials.MONGO_URL).gym.users
+    gym_classes_collection = MongoClient(
+        credentials.MONGO_URL).gym.reservations
 
 
 class RegistrationForm(Form):
@@ -59,10 +61,10 @@ def register():
         }
         try:
             gym_users_collection.insert_one(user)
-            flash('Thanks for registering')
+            logging.info('Thanks for registering')
         except errors.DuplicateKeyError:
-            flash('User already exists...')
-            flash('Updating info')
+            logging.info('User already exists...')
+            logging.info('Updating info')
             gym_users_collection.update(
                 {'_id': user['_id']},
                 {'$set': {
@@ -75,9 +77,11 @@ def register():
         return redirect(url_for('booking', membership_id=form.membership_id.data))
     return render_template('register.html', form=form)
 
+
 @app.route('/test')
 def test():
     return render_template('index.html', test='Test ID is 123123123')
+
 
 @app.route('/booking/', methods=['GET', 'POST'])
 @app.route('/booking/<membership_id>', methods=['GET', 'POST'])
@@ -88,20 +92,43 @@ def booking(membership_id=None):
         if not gym_class_id:
             return redirect(url_for('booking', membership_id=membership_id))
         gym_class = gym_classes_collection.find_one({'_id': gym_class_id})
+
+        email = gym_users_collection.find_one({'_id': membership_id})['email']
+        google_cal_event_id = gym_class.get('google_cal_event_id', '')
+        if not google_cal_event_id:
+            class_name = gym_class['class_name']
+            start_time = gym_class['start_time']
+            end_time = gym_class['end_time']
+            google_cal_event_id = calendar.add_event(
+                class_name, start_time, end_time, email=email)
+
         register_members = gym_class.get('register_members', [])
         if len(register_members):
             if membership_id in register_members:
+                # Removing the booking
                 gym_classes_collection.update(
                     {'_id': gym_class_id},
-                    {'$pull': {'register_members': membership_id}})
+                    {'$pull': {'register_members': membership_id}}
+                )
+                calendar.remove_attendee(google_cal_event_id, email)
+
             else:
+                # Adding the booking
                 gym_classes_collection.update(
                     {'_id': gym_class_id},
-                    {'$push': {'register_members': membership_id}})
+                    {'$push': {'register_members': membership_id}},
+                    {'$set': {'google_cal_event_id': google_cal_event_id}},
+                )
+                calendar.add_attendee(google_cal_event_id, email)
         else:
+            # Adding the booking
             gym_classes_collection.update(
                 {'_id': gym_class_id},
-                {'$set': {'register_members': [membership_id]}})
+                {'$set': {
+                    'register_members': [membership_id],
+                    'google_cal_event_id': google_cal_event_id,
+                }})
+            calendar.add_attendee(google_cal_event_id, email)
         return redirect(url_for('booking', membership_id=membership_id))
     if not membership_id:
         return render_template('index.html', error='Missing membership ID.')

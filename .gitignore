@@ -2,3 +2,6 @@ credentials.py
 __pycache__/
 .DS_Store
 static/.DS_Store
+/credentials/credentials.py
+/credentials/token.pickle
+/credentials/credentials_google_cal.json
